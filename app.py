@@ -15,7 +15,17 @@ app = modal.App("musicgen-large-inference")
 # Create a container image with all dependencies
 image = (
     modal.Image.debian_slim(python_version="3.10")
-    .apt_install("ffmpeg")
+    .apt_install(
+        "ffmpeg",
+        "pkg-config",
+        "libavformat-dev",
+        "libavcodec-dev",
+        "libavdevice-dev",
+        "libavutil-dev",
+        "libswscale-dev",
+        "libswresample-dev",
+        "libavfilter-dev",
+    )
     .pip_install(
         "torch>=2.1.0",
         "torchaudio>=2.1.0",
