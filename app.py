@@ -10,7 +10,7 @@ import io
 import base64
 
 # Define the Modal app
-app = modal.App("musicgen-inference")
+app = modal.App("musicgen-large-inference")
 
 # Create a container image with all dependencies
 image = (
