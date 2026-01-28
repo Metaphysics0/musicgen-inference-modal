@@ -17,18 +17,35 @@ image = (
     modal.Image.debian_slim(python_version="3.11")
     .apt_install("git", "ffmpeg")
     .pip_install(
-        "numpy==1.26.4",  # Must use numpy 1.x for PyTorch compatibility
+        # Core dependencies
+        "numpy==1.26.4",
         "torch>=2.2.0",
         "torchaudio>=2.2.0",
+        "torchvision",
         "pydantic>=2.0.0",
         "av>=12.0.0",
-        "transformers",
+
+        # audiocraft dependencies --START-- (from https://github.com/facebookresearch/audiocraft/blob/main/requirements.txt)
         "einops",
-        "librosa",
+        "flashy>=0.0.1",
+        "hydra-core>=1.1",
+        "hydra_colorlog",
+        "julius",
+        "num2words",
         "sentencepiece",
+        "spacy",
         "huggingface_hub",
-        "demucs",
+        "tqdm",
+        "transformers>=4.31.0",
         "xformers",
+        "demucs",
+        "librosa",
+        "soundfile",
+        "torchmetrics",
+        "encodec",
+        "protobuf",
+        # audiocraft dependencies --END--
+
         "fastapi[standard]",
     )
     .run_commands(
@@ -41,7 +58,7 @@ image = (
     image=image,
     gpu="A10G",
     timeout=600,
-    scaledown_window=120,
+    scaledown_window=60, # 1 minute
 )
 class MusicGenModel:
     """MusicGen Large model class for Modal."""
