@@ -26,9 +26,12 @@ image = (
         "libswresample-dev",
         "libavfilter-dev",
     )
+    # Install PyTorch first - audiocraft/transformers needs it available at import time
     .pip_install(
         "torch>=2.1.0",
         "torchaudio>=2.1.0",
+    )
+    .pip_install(
         "audiocraft",
         "pydantic>=2.0.0",
     )
