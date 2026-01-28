@@ -28,6 +28,7 @@ image = (
         "sentencepiece",
         "huggingface_hub",
         "demucs",
+        "xformers",
         "fastapi[standard]",
     )
     .run_commands(
