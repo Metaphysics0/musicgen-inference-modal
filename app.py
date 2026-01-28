@@ -17,11 +17,21 @@ image = (
     modal.Image.debian_slim(python_version="3.11")
     .apt_install("git", "ffmpeg")
     .pip_install(
-        "torch",
-        "torchaudio",
+        "numpy==1.26.4",  # Must use numpy 1.x for PyTorch compatibility
+        "torch>=2.2.0",
+        "torchaudio>=2.2.0",
         "pydantic>=2.0.0",
         "av>=12.0.0",
-        "audiocraft",
+        "transformers",
+        "einops",
+        "librosa",
+        "sentencepiece",
+        "huggingface_hub",
+        "demucs",
+        "fastapi[standard]",
+    )
+    .run_commands(
+        "pip install audiocraft --no-deps",  # Skip strict dependency checks
     )
 )
 
@@ -30,7 +40,7 @@ image = (
     image=image,
     gpu="A10G",
     timeout=600,
-    container_idle_timeout=120,
+    scaledown_window=120,
 )
 class MusicGenModel:
     """MusicGen Large model class for Modal."""
@@ -98,7 +108,7 @@ class MusicGenModel:
 
         return buffer.read()
 
-    @modal.web_endpoint(method="POST")
+    @modal.fastapi_endpoint(method="POST")
     def generate_endpoint(self, request: dict) -> dict:
         """
         Web endpoint for music generation.
@@ -145,7 +155,7 @@ class MusicGenModel:
             "duration": duration,
         }
 
-    @modal.web_endpoint(method="GET")
+    @modal.fastapi_endpoint(method="GET")
     def health(self) -> dict:
         """Health check endpoint."""
         return {"status": "ok", "model": "facebook/musicgen-large"}
