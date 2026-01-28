@@ -14,39 +14,16 @@ app = modal.App("musicgen-large-inference")
 
 # Create a container image with all dependencies
 image = (
-    modal.Image.debian_slim(python_version="3.10")
-    .apt_install(
-        "ffmpeg",
-        "pkg-config",
-        "libavformat-dev",
-        "libavcodec-dev",
-        "libavdevice-dev",
-        "libavutil-dev",
-        "libswscale-dev",
-        "libswresample-dev",
-        "libavfilter-dev",
-    )
-    # Install PyTorch first - audiocraft/transformers needs it available at import time
+    modal.Image.debian_slim(python_version="3.11")
+    .apt_install("git", "ffmpeg")
     .pip_install(
-        "torch>=2.1.0",
-        "torchaudio>=2.1.0",
-    )
-    .pip_install(
-        "audiocraft",
+        "torch",
+        "torchaudio",
         "pydantic>=2.0.0",
+        "av>=12.0.0",
+        "audiocraft",
     )
 )
-
-
-def download_model():
-    """Download and cache the MusicGen model at image build time."""
-    from audiocraft.models import MusicGen
-
-    MusicGen.get_pretrained("facebook/musicgen-large")
-
-
-# Build the image with model pre-downloaded
-image = image.run_function(download_model, gpu="A10G")
 
 
 @app.cls(
